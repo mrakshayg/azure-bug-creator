@@ -22,22 +22,26 @@ authRouter.get('/login', async (req, res) => {
   })
 })
 
-authRouter.post('/login', async (req, res) => {
-  const body = z.object({
-    organizationUrl: z.string().url(),
-    projectName: z.string().min(1),
-    pat: z.string().min(1),
-  }).parse(req.body)
+authRouter.post('/login', async (req, res, next) => {
+  try {
+    const body = z.object({
+      organizationUrl: z.string().url(),
+      projectName: z.string().min(1),
+      pat: z.string().min(1),
+    }).parse(req.body)
 
-  const user = await loginWithPersonalAccessToken(body)
-  req.session.user = user
-  await saveSession(req)
+    const user = await loginWithPersonalAccessToken(body)
+    req.session.user = user
+    await saveSession(req)
 
-  return res.json({
-    mode: 'pat',
-    authenticated: true,
-    user,
-  })
+    return res.json({
+      mode: 'pat',
+      authenticated: true,
+      user,
+    })
+  } catch (error) {
+    return next(error)
+  }
 })
 
 authRouter.get('/session', (req, res) => {
