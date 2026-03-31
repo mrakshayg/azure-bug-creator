@@ -79,7 +79,7 @@ The default local backend expects:
 
 ## Render deployment
 
-This repo is now structured for Render deployment through the root [render.yaml](/Users/akshay/Documents/codewave-internal-qa/azure-bug-creator/render.yaml):
+This repo is now structured for Render deployment through the root [render.yaml](render.yaml):
 
 - one Render Postgres database
 - one backend web service from `backend/`
