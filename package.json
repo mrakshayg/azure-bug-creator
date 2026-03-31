@@ -10,10 +10,12 @@
     "dev": "concurrently -n web,api -c blue,green \"npm:dev:web\" \"npm:dev:api\"",
     "dev:web": "vite",
     "dev:api": "npm run dev --prefix backend",
+    "build:web": "vite build",
+    "build:api": "npm run build --prefix backend",
     "prisma:generate": "npm run prisma:generate --prefix backend",
     "prisma:migrate:deploy": "npm run prisma:migrate:deploy --prefix backend",
     "start": "npm run start --prefix backend",
-    "build": "vite build",
+    "build": "npm run build:web && npm run build:api",
     "lint": "eslint .",
     "test": "vitest run",
     "preview": "vite preview"

@@ -1,5 +1,8 @@
 import cors from 'cors'
 import express from 'express'
+import { existsSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { env } from './config/env.js'
 import { createSessionMiddleware } from './lib/session.js'
@@ -12,6 +15,9 @@ import { submissionsRouter } from './routes/submissions.js'
 
 export function createApp() {
   const app = express()
+  const currentDir = dirname(fileURLToPath(import.meta.url))
+  const webDistDir = join(currentDir, '../../dist')
+  const webIndexPath = join(webDistDir, 'index.html')
 
   app.use(cors({
     origin: env.FRONTEND_ORIGIN,
@@ -25,6 +31,15 @@ export function createApp() {
   app.use('/api/v1', draftsRouter)
   app.use('/api/v1', attachmentsRouter)
   app.use('/api/v1', submissionsRouter)
+
+  // In single-service deployments, serve the built React app from the API service.
+  if (existsSync(webIndexPath)) {
+    app.use(express.static(webDistDir))
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api/')) return next()
+      return res.sendFile(webIndexPath)
+    })
+  }
 
   app.use(errorHandler)
 
