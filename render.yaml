@@ -1,8 +1,6 @@
-databases:
-  - name: bugdraft-db
-    databaseName: bugdraft
-    user: bugdraft
-
+# Render Blueprint using Supabase Postgres (no Render-managed DB).
+# Set `DATABASE_URL` in the Render dashboard from Supabase (Project Settings → Database → Connection string → URI → Direct).
+# See docs/supabase.md
 services:
   - type: web
     name: bugdraft-api
@@ -19,10 +17,6 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DATABASE_URL
-        fromDatabase:
-          name: bugdraft-db
-          property: connectionString
       - key: SESSION_SECRET
         generateValue: true
       - key: FRONTEND_ORIGIN

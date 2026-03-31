@@ -67,23 +67,13 @@ npm run prisma:migrate:deploy
 npm run dev
 ```
 
-### 3. Local Postgres
-
-```bash
-npm run db:up
-```
-
-The default local backend expects:
-
-- `DATABASE_URL=postgresql://bugdraft:bugdraft@127.0.0.1:5432/bugdraft`
-
 ## Render deployment
 
-This repo is now structured for Render deployment through the root [render.yaml](render.yaml):
+This repo is structured for Render deployment through the root [render.yaml](render.yaml) (Supabase Postgres):
 
-- one Render Postgres database
 - one backend web service from `backend/`
 - one frontend static site from the repo root
+ - Supabase provides `DATABASE_URL` (set it in the Render service environment)
 
 Set these values for production:
 
@@ -99,8 +89,8 @@ The frontend now reads `VITE_API_BASE_URL` so the static site can call the Rende
 
 Recommended first deploy sequence:
 
-1. create the Render Postgres database
-2. create the backend service and attach the persistent upload disk
+1. create the backend service and attach the persistent upload disk
+2. set `DATABASE_URL` from Supabase in Render
 3. let the backend run `prisma migrate deploy`
 4. create the frontend static site
 5. verify:
