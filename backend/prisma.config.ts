@@ -16,7 +16,7 @@ if (fromEnv) {
   datasourceUrl = buildTimePlaceholder
 } else {
   throw new Error(
-    'DATABASE_URL is not set. In Render: create or link a PostgreSQL instance, then add DATABASE_URL (use the Internal Database URL on the web service Environment tab).'
+    'DATABASE_URL is not set. Use Supabase (Project Settings → Database → URI, Direct) or Render Postgres, then set DATABASE_URL in Environment (see docs/supabase.md).'
   )
 }
 
