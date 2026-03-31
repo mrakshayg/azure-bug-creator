@@ -1,14 +1,14 @@
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { Select } from '@/components/ui/Select'
-import { PRIORITIES, SEVERITIES, MODULES, ENVIRONMENTS } from '@/lib/mockData'
+import { PRIORITIES, SEVERITIES, ENVIRONMENTS } from '@/lib/mockData'
 
-export function Step5Review({ data, update }) {
+export function Step5Review({ data, update, errors }) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Review & Edit</h2>
-        <p className="text-sm text-gray-500 mt-1">
+        <h2 className="text-xl font-semibold tracking-tight text-gray-950">Review and edit</h2>
+        <p className="mt-2 max-w-2xl text-sm text-gray-500">
           Fields have been pre-filled from the AI output. Edit anything that looks off before submitting.
         </p>
       </div>
@@ -18,6 +18,8 @@ export function Step5Review({ data, update }) {
         value={data.title}
         onChange={e => update({ title: e.target.value })}
         placeholder="Enter bug title..."
+        className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3"
+        error={errors.title}
       />
 
       <Textarea
@@ -26,15 +28,19 @@ export function Step5Review({ data, update }) {
         value={data.steps}
         onChange={e => update({ steps: e.target.value })}
         placeholder="1. Step one&#10;2. Step two"
+        className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3"
+        error={errors.steps}
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Textarea
           label="Expected Result"
           rows={3}
           value={data.expectedResult}
           onChange={e => update({ expectedResult: e.target.value })}
           placeholder="What should happen..."
+          className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3"
+          error={errors.expectedResult}
         />
         <Textarea
           label="Actual Result"
@@ -42,17 +48,19 @@ export function Step5Review({ data, update }) {
           value={data.actualResult}
           onChange={e => update({ actualResult: e.target.value })}
           placeholder="What actually happened..."
+          className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3"
+          error={errors.actualResult}
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Select label="Priority" options={PRIORITIES} value={data.priority} onChange={e => update({ priority: e.target.value })} />
-        <Select label="Severity" options={SEVERITIES} value={data.severity} onChange={e => update({ severity: e.target.value })} />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Select label="Priority" options={PRIORITIES} value={data.priority} onChange={e => update({ priority: e.target.value })} className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3" error={errors.priority} />
+        <Select label="Severity" options={SEVERITIES} value={data.severity} onChange={e => update({ severity: e.target.value })} className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3" error={errors.severity} />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Select label="Module" options={MODULES} value={data.module} onChange={e => update({ module: e.target.value })} />
-        <Select label="Environment" options={ENVIRONMENTS} value={data.environment} onChange={e => update({ environment: e.target.value })} />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Input label="Module / Bug Location" value={data.module} onChange={e => update({ module: e.target.value })} placeholder="Lead Listing Page >> Rows per page" className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3" error={errors.module} hint="Example: CRM >> Lead >> Quick Filter" />
+        <Select label="Environment" options={ENVIRONMENTS} value={data.environment} onChange={e => update({ environment: e.target.value })} className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3" error={errors.environment} />
       </div>
     </div>
   )

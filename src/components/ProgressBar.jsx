@@ -3,7 +3,8 @@ import { cn } from '@/lib/utils'
 
 export function ProgressBar({ steps, currentStep }) {
   return (
-    <div className="flex items-center w-full">
+    <div className="-mx-2 overflow-x-auto px-2">
+      <div className="flex min-w-max items-start">
       {steps.map((label, idx) => {
         const stepNum = idx + 1
         const isCompleted = stepNum < currentStep
@@ -11,34 +12,38 @@ export function ProgressBar({ steps, currentStep }) {
         const isLast = idx === steps.length - 1
 
         return (
-          <div key={label} className={cn('flex items-center', !isLast && 'flex-1')}>
-            {/* Circle */}
-            <div className="flex flex-col items-center gap-1">
+          <div
+            key={label}
+            role="listitem"
+            aria-current={isActive ? 'step' : undefined}
+            className={cn('flex items-start', !isLast && 'flex-1')}
+          >
+            <div className="flex min-w-24 flex-col items-center gap-2 sm:min-w-28">
               <div className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium transition-colors',
-                isCompleted && 'border-blue-600 bg-blue-600 text-white',
-                isActive && 'border-blue-600 bg-white text-blue-600',
+                'flex h-9 w-9 items-center justify-center rounded-full border text-sm font-medium transition-colors',
+                isCompleted && 'border-gray-900 bg-gray-900 text-white',
+                isActive && 'border-gray-900 bg-white text-gray-900',
                 !isCompleted && !isActive && 'border-gray-300 bg-white text-gray-400'
               )}>
                 {isCompleted ? <Check size={14} /> : stepNum}
               </div>
               <span className={cn(
-                'text-xs whitespace-nowrap',
-                isActive ? 'text-blue-600 font-medium' : 'text-gray-400'
+                'text-center text-xs whitespace-nowrap',
+                isActive ? 'font-medium text-gray-900' : isCompleted ? 'text-gray-600' : 'text-gray-400'
               )}>
                 {label}
               </span>
             </div>
-            {/* Connector line */}
             {!isLast && (
               <div className={cn(
-                'h-0.5 flex-1 mx-1 mb-5 transition-colors',
-                isCompleted ? 'bg-blue-600' : 'bg-gray-200'
+                'mx-2 mt-4 h-px w-8 transition-colors sm:w-12',
+                isCompleted ? 'bg-gray-900' : 'bg-gray-200'
               )} />
             )}
           </div>
         )
       })}
+      </div>
     </div>
   )
 }

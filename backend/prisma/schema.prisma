@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String            @id @default(cuid())
+  email           String?           @unique
+  displayName     String?
+  authIdentityKey String            @unique
+  createdAt       DateTime          @default(now())
+  lastLoginAt     DateTime?
+  sessions        Session[]
+  drafts          BugDraft[]
+  connections     AzureConnection[]
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  sessionId  String   @unique
+  userId     String?
+  sessionData Json
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AzureConnection {
+  id                    String     @id @default(cuid())
+  userId                String
+  organizationUrl       String?
+  projectName           String?
+  encryptedAccessToken  String?
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+  user                  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drafts                BugDraft[]
+}
+
+model BugDraft {
+  id                 String            @id @default(cuid())
+  userId             String
+  azureConnectionId  String?
+  status             String
+  description        String
+  module             String?
+  environment        String?
+  prompt             String?
+  title              String?
+  steps              String?
+  expectedResult     String?
+  actualResult       String?
+  priority           String?
+  severity           String?
+  parserWarningsJson Json?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  azureConnection    AzureConnection?  @relation(fields: [azureConnectionId], references: [id], onDelete: SetNull)
+  versions           BugDraftVersion[]
+  attachments        BugAttachment[]
+  submissions        BugSubmission[]
+}
+
+model BugDraftVersion {
+  id            String   @id @default(cuid())
+  draftId       String
+  versionNumber Int
+  payloadJson   Json
+  createdAt     DateTime @default(now())
+  draft         BugDraft @relation(fields: [draftId], references: [id], onDelete: Cascade)
+}
+
+model BugAttachment {
+  id                String   @id @default(cuid())
+  draftId           String
+  storageKey        String
+  fileName          String
+  mimeType          String
+  sizeBytes         Int
+  status            String
+  azureAttachmentUrl String?
+  createdAt         DateTime @default(now())
+  draft             BugDraft @relation(fields: [draftId], references: [id], onDelete: Cascade)
+}
+
+model BugSubmission {
+  id                 String   @id @default(cuid())
+  draftId            String
+  azureBugId         String?
+  azureBugUrl        String?
+  requestPayloadJson Json?
+  responsePayloadJson Json?
+  submittedAt        DateTime?
+  status             String
+  errorMessage       String?
+  draft              BugDraft @relation(fields: [draftId], references: [id], onDelete: Cascade)
+}

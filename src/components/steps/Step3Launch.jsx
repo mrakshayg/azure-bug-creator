@@ -32,31 +32,42 @@ const AI_TOOLS = [
 
 export function Step3Launch({ data, onNext }) {
   const [launched, setLaunched] = useState(null)
+  const [launchError, setLaunchError] = useState('')
+  const [popupBlocked, setPopupBlocked] = useState('')
 
   const handleLaunch = async (tool) => {
-    const prompt = buildPrompt(data)
-    await navigator.clipboard.writeText(prompt)
-    window.open(tool.url, '_blank')
+    const prompt = data.prompt || buildPrompt(data)
+
+    try {
+      await navigator.clipboard.writeText(prompt)
+    } catch {
+      setLaunchError('Clipboard access failed. Copy the prompt manually from Step 2 before launching the AI tool.')
+      return
+    }
+
+    const popup = window.open(tool.url, '_blank', 'noopener,noreferrer')
     setLaunched(tool.name)
+    setLaunchError('')
+    setPopupBlocked(popup ? '' : tool.url)
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Launch Your AI Tool</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          Click a button below — the prompt will be copied to your clipboard and the AI tool will open in a new tab.
-          Paste the prompt, get the structured output, then come back here.
+        <h2 className="text-xl font-semibold tracking-tight text-gray-950">Launch your AI tool</h2>
+        <p className="mt-2 max-w-2xl text-sm text-gray-500">
+          Open one tool, paste the prompt, ask for the structured bug report, then return here with the result.
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {AI_TOOLS.map(tool => (
           <button
             key={tool.name}
             onClick={() => handleLaunch(tool)}
-            className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 transition-all cursor-pointer ${
-              launched === tool.name ? tool.activeColor : `border-gray-200 bg-white ${tool.color}`
+            type="button"
+            className={`flex cursor-pointer flex-col items-center gap-4 rounded-2xl border p-6 text-left transition-all ${
+              launched === tool.name ? tool.activeColor : `border-gray-200 bg-gray-50 ${tool.color}`
             }`}
           >
             <span className="text-4xl">{tool.logo}</span>
@@ -71,9 +82,21 @@ export function Step3Launch({ data, onNext }) {
         ))}
       </div>
 
+      {launchError && (
+        <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {launchError}
+        </div>
+      )}
+
+      {popupBlocked && (
+        <div role="alert" className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+          Your browser blocked the new tab. Open <a className="font-medium underline" href={popupBlocked} target="_blank" rel="noreferrer">this AI tool link</a> manually.
+        </div>
+      )}
+
       {launched && (
-        <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-green-700">
+        <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 text-sm text-gray-700">
             <CheckCircle2 size={16} />
             Prompt copied! {launched} opened in a new tab. Paste the prompt, copy the structured output, then click below.
           </div>

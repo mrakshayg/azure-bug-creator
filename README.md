@@ -1,16 +1,119 @@
-# React + Vite
+# BugDraft
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+BugDraft is a React + Vite frontend with a Node + TypeScript backend for turning QA notes, AI output, and screenshots into Azure DevOps bug work items.
 
-Currently, two official plugins are available:
+## What it does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. user writes the bug in plain English
+2. user enters the exact bug location
+3. app generates a strict AI prompt
+4. user pastes structured AI output
+5. user reviews and edits the parsed bug
+6. user uploads or pastes screenshots
+7. app creates the Azure DevOps bug
 
-## React Compiler
+## Current architecture
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- frontend: React + Vite
+- backend: Express + TypeScript
+- persistence: Prisma + PostgreSQL
+- auth: Azure DevOps PAT validation with server-side session cookies
+- uploads: temporary file storage plus Azure WIT attachment upload on submit
 
-## Expanding the ESLint configuration
+The old prototype-only branches are gone:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- no Entra / OAuth flow
+- no stub auth mode
+- no mock Azure mode
+- no JSON-file persistence fallback
+
+## Product behavior
+
+- PAT login with organization URL, project, and user PAT
+- module is free-text `Module / Bug Location`
+- environments are `Dev`, `Int`, `UAT`
+- screenshots can be added by browse, drag-and-drop, or clipboard paste
+- uploaded screenshots are embedded into the Azure work item content
+- final screen tells the user to open Azure and complete:
+  - Assign People
+  - Add Tags
+  - Set Area
+  - Set Iteration
+
+## Dashboard semantics
+
+The dashboard is local BugDraft history, not a live Azure status mirror.
+
+- `Draft` = draft exists in BugDraft
+- `Submitted to Azure` = BugDraft created the work item
+
+## Local development
+
+### 1. Frontend
+
+```bash
+npm install
+npm run dev:web -- --host 127.0.0.1 --port 5173
+```
+
+### 2. Backend
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+npm run prisma:generate
+npm run prisma:migrate:deploy
+npm run dev
+```
+
+### 3. Local Postgres
+
+```bash
+npm run db:up
+```
+
+The default local backend expects:
+
+- `DATABASE_URL=postgresql://bugdraft:bugdraft@127.0.0.1:5432/bugdraft`
+
+## Render deployment
+
+This repo is now structured for Render deployment through the root [render.yaml](/Users/akshay/Documents/codewave-internal-qa/azure-bug-creator/render.yaml):
+
+- one Render Postgres database
+- one backend web service from `backend/`
+- one frontend static site from the repo root
+
+Set these values for production:
+
+- backend:
+  - `DATABASE_URL`
+  - `SESSION_SECRET`
+  - `FRONTEND_ORIGIN`
+  - `UPLOAD_DIR`
+- frontend:
+  - `VITE_API_BASE_URL`
+
+The frontend now reads `VITE_API_BASE_URL` so the static site can call the Render API service.
+
+Recommended first deploy sequence:
+
+1. create the Render Postgres database
+2. create the backend service and attach the persistent upload disk
+3. let the backend run `prisma migrate deploy`
+4. create the frontend static site
+5. verify:
+   - `/api/v1/health`
+   - PAT login
+   - draft creation
+   - screenshot upload
+   - Azure bug creation
+
+## Verification
+
+```bash
+npm test
+npm run build
+cd backend && npm run check
+```
