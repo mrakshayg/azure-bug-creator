@@ -19,6 +19,10 @@ export function createApp() {
   const webDistDir = join(currentDir, '../../dist')
   const webIndexPath = join(webDistDir, 'index.html')
 
+  if (env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1)
+  }
+
   app.use(cors({
     origin: env.FRONTEND_ORIGIN,
     credentials: true,

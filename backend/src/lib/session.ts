@@ -96,6 +96,8 @@ class PrismaSessionStore extends session.Store {
 }
 
 export function createSessionMiddleware() {
+  const isProduction = env.NODE_ENV === 'production'
+
   return session({
     name: 'bugdraft_session',
     secret: env.SESSION_SECRET,
@@ -104,8 +106,8 @@ export function createSessionMiddleware() {
     store: new PrismaSessionStore(),
     cookie: {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: env.NODE_ENV === 'production',
+      sameSite: isProduction ? 'none' : 'lax',
+      secure: isProduction,
       maxAge: 1000 * 60 * 30,
     },
   })
