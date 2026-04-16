@@ -10,6 +10,7 @@
     "dev": "concurrently -n web,api -c blue,green \"npm:dev:web\" \"npm:dev:api\"",
     "dev:web": "vite",
     "dev:api": "npm run dev --prefix backend",
+    "ci:api": "npm ci --prefix backend",
     "build:web": "vite build",
     "build:api": "npm run build --prefix backend",
     "prisma:generate": "npm run prisma:generate --prefix backend",

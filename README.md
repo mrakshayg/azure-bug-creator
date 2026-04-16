@@ -75,6 +75,12 @@ This repo is structured for Render deployment through the root [render.yaml](ren
 - one frontend static site from the repo root
  - Supabase provides `DATABASE_URL` (set it in the Render service environment)
 
+If you deploy as a **single Render web service** (frontend served by backend), set:
+
+- Root Directory: repo root (empty)
+- Build Command: `npm ci && npm run ci:api && npm run prisma:generate && npm run build`
+- Start Command: `npm run prisma:migrate:deploy && npm start`
+
 Set these values for production:
 
 - backend:
