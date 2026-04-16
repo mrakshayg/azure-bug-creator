@@ -57,6 +57,8 @@ model BugDraft {
   actualResult       String?
   priority           String?
   severity           String?
+  linkedUserStoryId  String?
+  linkedUserStoryMode String? @default("Child")
   parserWarningsJson Json?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt

@@ -103,7 +103,36 @@ function buildAzureError(status: number, raw: string, fallback: string) {
 type WorkItemPatchOperation = {
   op: 'add'
   path: string
-  value: string | number
+  value: string | number | Record<string, unknown>
+}
+
+function buildStoryRelationOperation(
+  draft: DraftRecord,
+  organizationUrl: string,
+  projectName: string,
+): WorkItemPatchOperation | null {
+  const storyId = draft.linkedUserStoryId?.trim() ?? ''
+  if (!storyId) return null
+
+  if (!/^\d+$/.test(storyId)) {
+    throw new Error('User Story ID must be numeric when linking is enabled.')
+  }
+
+  const relationType = draft.linkedUserStoryMode === 'Related'
+    ? 'System.LinkTypes.Related'
+    : 'System.LinkTypes.Hierarchy-Reverse'
+
+  return {
+    op: 'add',
+    path: '/relations/-',
+    value: {
+      rel: relationType,
+      url: `${organizationUrl}/${encodeURIComponent(projectName)}/_apis/wit/workItems/${storyId}`,
+      attributes: {
+        comment: 'Linked by BugDraft on create',
+      },
+    },
+  }
 }
 
 async function uploadAttachmentToAzure(organizationUrl: string, projectName: string, patToken: string, attachment: AttachmentRecord) {
@@ -232,6 +261,12 @@ export async function submitDraftToAzure(draft: DraftRecord) {
   fullBody.push({ op: 'add', path: '/fields/Custom.RootCauseAnalysis', value: buildRootCauseAnalysis(draft) })
   if (severityValue) {
     fullBody.push({ op: 'add', path: '/fields/Microsoft.VSTS.Common.Severity', value: severityValue })
+  }
+
+  const storyRelation = buildStoryRelationOperation(draft, organizationUrl, projectName)
+  if (storyRelation) {
+    fullBody.push(storyRelation)
+    minimalBody.push(storyRelation)
   }
 
   let result = await createBugRequest(url, patToken, fullBody)

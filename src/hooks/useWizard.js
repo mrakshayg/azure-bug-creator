@@ -15,6 +15,8 @@ const INITIAL_STATE = {
   actualResult: '',
   priority: 'High',
   severity: '2 - Major',
+  linkedUserStoryId: '',
+  linkedUserStoryMode: 'Child',
   attachments: [],
   submittedBugId: null,
   submittedBugUrl: '',
@@ -35,6 +37,8 @@ function buildDraftPayload(data) {
     actualResult: data.actualResult,
     priority: data.priority,
     severity: data.severity,
+    linkedUserStoryId: data.linkedUserStoryId,
+    linkedUserStoryMode: data.linkedUserStoryMode,
     parserWarnings: data.parserWarnings ?? [],
   }
 }

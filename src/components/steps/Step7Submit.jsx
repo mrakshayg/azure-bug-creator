@@ -4,6 +4,8 @@ import { Textarea } from '@/components/ui/Textarea'
 import { Select } from '@/components/ui/Select'
 import { PRIORITIES, SEVERITIES, ENVIRONMENTS } from '@/lib/mockData'
 
+const STORY_LINK_MODES = ['Child', 'Related']
+
 export function Step7Submit({ data, update, errors }) {
   return (
     <div className="space-y-6">
@@ -36,6 +38,26 @@ export function Step7Submit({ data, update, errors }) {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Select label="Priority" options={PRIORITIES} value={data.priority} onChange={e => update({ priority: e.target.value })} className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3" error={errors.priority} />
         <Select label="Severity" options={SEVERITIES} value={data.severity} onChange={e => update({ severity: e.target.value })} className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3" error={errors.severity} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Input
+          label="User Story ID (Optional)"
+          value={data.linkedUserStoryId}
+          onChange={e => update({ linkedUserStoryId: e.target.value })}
+          placeholder="e.g. 12345"
+          className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3"
+          error={errors.linkedUserStoryId}
+          hint="If provided, this bug will be linked to the specified work item."
+        />
+        <Select
+          label="Link Mode"
+          options={STORY_LINK_MODES}
+          value={data.linkedUserStoryMode || 'Child'}
+          onChange={e => update({ linkedUserStoryMode: e.target.value })}
+          className="rounded-xl border-gray-200 bg-gray-50 px-4 py-3"
+          hint={data.linkedUserStoryMode === 'Related' ? 'Creates a generic relation.' : 'Creates bug as a child of the User Story.'}
+        />
       </div>
 
       <Textarea

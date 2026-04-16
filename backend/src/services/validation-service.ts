@@ -11,6 +11,8 @@ export const draftPayloadSchema = z.object({
   actualResult: z.string().default(''),
   priority: z.string().default(''),
   severity: z.string().default(''),
+  linkedUserStoryId: z.string().default(''),
+  linkedUserStoryMode: z.enum(['Child', 'Related']).default('Child'),
   parserWarnings: z.array(z.string()).default([]),
 })
 

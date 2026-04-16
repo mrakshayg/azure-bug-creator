@@ -33,6 +33,8 @@ export async function submitDraft(draft: DraftRecord) {
         title: draft.title,
         priority: draft.priority,
         severity: draft.severity,
+        linkedUserStoryId: draft.linkedUserStoryId,
+        linkedUserStoryMode: draft.linkedUserStoryMode,
       },
       responsePayload: azure.responsePayload,
       submittedAt: new Date().toISOString(),

@@ -29,6 +29,8 @@ export async function createDraft(userId: string, payload: unknown) {
     actualResult: parsed.actualResult ?? '',
     priority: parsed.priority ?? 'High',
     severity: parsed.severity ?? '2 - Major',
+    linkedUserStoryId: parsed.linkedUserStoryId ?? '',
+    linkedUserStoryMode: parsed.linkedUserStoryMode ?? 'Child',
     parserWarnings: parsed.parserWarnings ?? [],
     attachments: [],
     createdAt: now,

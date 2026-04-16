@@ -1,0 +1,2 @@
+ALTER TABLE "BugDraft" ADD COLUMN IF NOT EXISTS "linkedUserStoryId" TEXT;
+ALTER TABLE "BugDraft" ADD COLUMN IF NOT EXISTS "linkedUserStoryMode" TEXT DEFAULT 'Child';

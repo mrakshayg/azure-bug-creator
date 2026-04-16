@@ -127,6 +127,14 @@ export function Result({ bugId, title, data, onReset }) {
                 <p className="text-xs uppercase tracking-[0.16em] text-gray-400">Actual Result</p>
                 <p className="mt-1 text-gray-950">{data.actualResult}</p>
               </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.16em] text-gray-400">User Story Link</p>
+                <p className="mt-1 text-gray-950">
+                  {data.linkedUserStoryId
+                    ? `${data.linkedUserStoryMode || 'Child'} -> ${data.linkedUserStoryId}`
+                    : 'None'}
+                </p>
+              </div>
             </div>
           </div>
         </div>

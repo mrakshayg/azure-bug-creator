@@ -43,6 +43,12 @@ export function validateWizardStep(step, data) {
     })
   }
 
+  if ((step === 5 || step === 7) && hasText(data.linkedUserStoryId)) {
+    if (!/^\d+$/.test(data.linkedUserStoryId.trim())) {
+      errors.linkedUserStoryId = 'User Story ID must be numeric.'
+    }
+  }
+
   return {
     isValid: Object.keys(errors).length === 0,
     errors,

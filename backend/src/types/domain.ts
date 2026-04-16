@@ -36,6 +36,8 @@ export type DraftRecord = {
   actualResult: string
   priority: string
   severity: string
+  linkedUserStoryId: string
+  linkedUserStoryMode: 'Child' | 'Related'
   parserWarnings: string[]
   attachments: AttachmentRecord[]
   createdAt: string
