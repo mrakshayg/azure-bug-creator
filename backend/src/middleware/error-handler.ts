@@ -4,7 +4,7 @@ import { ZodError } from 'zod'
 
 import { logger } from '../lib/logger.js'
 
-export function errorHandler(error: unknown, _req: Request, res: Response, next: NextFunction) {
+export function errorHandler(error: unknown, req: Request, res: Response, next: NextFunction) {
   if (res.headersSent) {
     return next(error)
   }
@@ -34,14 +34,24 @@ export function errorHandler(error: unknown, _req: Request, res: Response, next:
     && 'status' in error
     && typeof error.status === 'number'
   ) {
-    logger.error(error)
+    logger.error({
+      message: 'Request failed',
+      method: req.method,
+      path: req.path,
+      error,
+    })
     return res.status(error.status).json({
       error: 'request_failed',
       message: error instanceof Error ? error.message : 'Request failed.',
     })
   }
 
-  logger.error(error)
+  logger.error({
+    message: 'Unhandled error',
+    method: req.method,
+    path: req.path,
+    error,
+  })
 
   return res.status(500).json({
     error: 'internal_server_error',

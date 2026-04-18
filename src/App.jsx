@@ -85,6 +85,10 @@ export default function App() {
     try {
       const payload = await beginLogin(loginForm)
       setUser(payload.user)
+      setLoginForm((current) => ({
+        ...current,
+        pat: '',
+      }))
       await loadDrafts()
     } catch (error) {
       setAuthError(error.message || 'Unable to validate Azure DevOps token.')
@@ -102,6 +106,10 @@ export default function App() {
       setUser(null)
       setWizardOpen(false)
       setBugs([])
+      setLoginForm((current) => ({
+        ...current,
+        pat: '',
+      }))
     } catch {
       setAuthError('Logout failed. Please try again.')
     } finally {

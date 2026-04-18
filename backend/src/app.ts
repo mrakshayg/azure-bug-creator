@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { env } from './config/env.js'
 import { createSessionMiddleware } from './lib/session.js'
 import { errorHandler } from './middleware/error-handler.js'
+import { redactAuthBody } from './middleware/redact-auth-body.js'
 import { attachmentsRouter } from './routes/attachments.js'
 import { authRouter } from './routes/auth.js'
 import { draftsRouter } from './routes/drafts.js'
@@ -31,6 +32,7 @@ export function createApp() {
   app.use(createSessionMiddleware())
 
   app.use('/api/v1', healthRouter)
+  app.use('/api/v1/auth', redactAuthBody)
   app.use('/api/v1/auth', authRouter)
   app.use('/api/v1', draftsRouter)
   app.use('/api/v1', attachmentsRouter)
