@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { requireAuth } from '../middleware/require-auth.js'
 import { createDraft, getDraft, listDrafts, updateDraft } from '../services/draft-service.js'
 import { parseAiOutputDetails } from '../services/parser-service.js'
+import { extractUserStoryContext } from '../services/user-story-service.js'
 
 export const draftsRouter = Router()
 
@@ -50,4 +51,14 @@ draftsRouter.post('/drafts/:draftId/parse', async (req, res) => {
     draft: updated,
     parser: parsed,
   })
+})
+
+draftsRouter.post('/user-stories/extract', async (req, res) => {
+  const bodySchema = z.object({
+    storyId: z.string().trim().min(1),
+  })
+
+  const { storyId } = bodySchema.parse(req.body)
+  const context = await extractUserStoryContext(req.session.user!.id, storyId)
+  res.json(context)
 })

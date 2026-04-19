@@ -72,3 +72,11 @@ export function uploadAttachment(draftId, file) {
     body: formData,
   })
 }
+
+export function extractUserStory(storyId) {
+  return request('/api/v1/user-stories/extract', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ storyId }),
+  })
+}

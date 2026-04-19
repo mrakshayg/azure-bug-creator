@@ -33,3 +33,28 @@ Rules:
 Bug Description:
 ${description}`
 }
+
+const STORY_CONTEXT_START = 'USER_STORY_CONTEXT_START'
+const STORY_CONTEXT_END = 'USER_STORY_CONTEXT_END'
+
+export function removeUserStoryContext(prompt) {
+  if (!prompt) return ''
+  const startIndex = prompt.indexOf(STORY_CONTEXT_START)
+  if (startIndex === -1) return prompt
+
+  const endIndex = prompt.indexOf(STORY_CONTEXT_END, startIndex)
+  if (endIndex === -1) {
+    return prompt.slice(0, startIndex).trimEnd()
+  }
+
+  const before = prompt.slice(0, startIndex).trimEnd()
+  const after = prompt.slice(endIndex + STORY_CONTEXT_END.length).trimStart()
+  return [before, after].filter(Boolean).join('\n\n')
+}
+
+export function appendUserStoryContext(prompt, contextBlock) {
+  const base = removeUserStoryContext((prompt || '').trim())
+  const context = (contextBlock || '').trim()
+  if (!context) return base
+  return base ? `${base}\n\n${context}` : context
+}
